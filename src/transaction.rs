@@ -6,8 +6,8 @@ use std::ffi::CString;
 use std::ptr::NonNull;
 use std::sync::Mutex;
 
-use libscf_sys::*;
 use crate::{PropertyGroup, Result, Scf, ScfError, Value};
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Transaction<'a> {
@@ -187,11 +187,7 @@ impl<'a> TransactionEntry<'a> {
         if let Some(entry) =
             NonNull::new(unsafe { scf_entry_create(scf.handle.as_ptr()) })
         {
-            Ok(TransactionEntry {
-                scf,
-                entry,
-                values: Vec::new(),
-            })
+            Ok(TransactionEntry { scf, entry, values: Vec::new() })
         } else {
             Err(ScfError::last())
         }

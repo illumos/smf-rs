@@ -242,11 +242,7 @@ fn str_from(buf: &mut Vec<u8>, ret: libc::ssize_t) -> Result<String> {
     let sz = ret as usize;
     unsafe { buf.set_len(sz + 1) };
 
-    Ok(CStr::from_bytes_with_nul(buf)
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string())
+    Ok(CStr::from_bytes_with_nul(buf).unwrap().to_str().unwrap().to_string())
 }
 
 #[derive(Debug)]

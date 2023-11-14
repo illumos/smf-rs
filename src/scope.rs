@@ -5,10 +5,10 @@
 use std::ffi::CString;
 use std::ptr::NonNull;
 
-use libscf_sys::*;
 use crate::{
     buf_for, str_from, Iter, Result, Scf, ScfError, Service, Services,
 };
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Scope<'a> {

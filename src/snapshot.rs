@@ -5,11 +5,11 @@
 use std::ffi::CString;
 use std::ptr::NonNull;
 
-use libscf_sys::*;
 use crate::{
     buf_for, str_from, Instance, Iter, PropertyGroup, PropertyGroups, Result,
     ScfError,
 };
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Snapshot<'a> {

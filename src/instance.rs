@@ -5,11 +5,11 @@
 use std::ffi::CString;
 use std::ptr::NonNull;
 
-use libscf_sys::*;
 use crate::{
     buf_for, str_from, Iter, PropertyGroup, PropertyGroups, Result, Scf,
     ScfError, Service, Snapshot, Snapshots,
 };
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Instance<'a> {

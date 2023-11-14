@@ -7,8 +7,8 @@ use std::ptr::NonNull;
 
 use num_traits::cast::FromPrimitive;
 
-use libscf_sys::*;
 use crate::{buf_for, str_from, Iter, Property, Result, Scf, ScfError};
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Value<'a> {

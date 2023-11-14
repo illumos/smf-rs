@@ -4,11 +4,11 @@
 
 use std::ptr::NonNull;
 
-use libscf_sys::*;
 use crate::{
     buf_for, str_from, Iter, PropertyGroup, Result, Scf, ScfError, Value,
     Values,
 };
+use libscf_sys::*;
 
 #[derive(Debug)]
 pub struct Property<'a> {
