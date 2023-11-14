@@ -139,20 +139,69 @@ pub struct Scf {
 }
 
 impl Scf {
+    /**
+     * Connect to the local SMF repository in the current zone.
+     */
     pub fn new() -> Result<Scf> {
-        if let Some(handle) =
+        Self::new_common(None)
+    }
+
+    /**
+     * Connect to the SMF repository for a non-global zone.  This requires
+     * sufficient privileges to access the root file system for the nominated
+     * zone, which is generally restricted to super users.
+     *
+     * Note that this routine depends on a handle decoration that is not
+     * currently Committed, and may change (i.e., break) in the future.
+     */
+    pub fn new_for_zone(zonename: &str) -> Result<Scf> {
+        Self::new_common(Some(zonename))
+    }
+
+    fn new_common(zonename: Option<&str>) -> Result<Scf> {
+        /*
+         * Create the Scf object immediately so that we can lean on its Drop
+         * implementation for unbinding and destroying the handle on error.
+         */
+        let scf = if let Some(handle) =
             NonNull::new(unsafe { scf_handle_create(SCF_VERSION) })
         {
-            if unsafe { scf_handle_bind(handle.as_ptr()) } != 0 {
-                let e = ScfError::last();
-                unsafe { scf_handle_destroy(handle.as_ptr()) };
-                Err(e)
-            } else {
-                Ok(Scf { handle })
-            }
+            Scf { handle }
         } else {
-            Err(ScfError::last())
+            return Err(ScfError::last());
+        };
+
+        /*
+         * If a zonename was provided, decorate the handle with it.  This must
+         * be done before the call to scf_handle_bind(3SCF).
+         */
+        if let Some(zonename) = zonename {
+            /*
+             * The "zone" decoration must be provided as an "astring" value.
+             * The value can be freed immediately after the call, as the value
+             * is copied into the handle.  We let the Drop implementation for
+             * Value do that automatically.
+             */
+            let zone = Value::new(&scf)?;
+            zone.set_from_string(scf_type_t::SCF_TYPE_ASTRING, zonename)?;
+
+            if unsafe {
+                scf_handle_decorate(
+                    scf.handle.as_ptr(),
+                    decorations::ZONE.as_ptr() as *mut libc::c_char,
+                    zone.value.as_ptr(),
+                )
+            } != 0
+            {
+                return Err(ScfError::last());
+            }
         }
+
+        if unsafe { scf_handle_bind(scf.handle.as_ptr()) } != 0 {
+            return Err(ScfError::last());
+        }
+
+        Ok(scf)
     }
 
     pub fn scope_local(&self) -> Result<Scope> {
