@@ -2,10 +2,13 @@
 name = "smf"
 version = "0.10.0"
 edition = "2021"
+license = "MPL-2.0"
+description = "access the service management facility (SMF) via libscf"
+keywords = ["smf", "illumos", "libscf", "scf"]
+repository = "https://github.com/illumos/smf-rs"
 
 [dependencies]
 libc = "0.2"
-libscf-sys = { path = "/ws/libscf-sys" }
-#libscf-sys = { git = "https://github.com/illumos/libscf-sys.git" }
+libscf-sys = { git = "https://github.com/illumos/libscf-sys.git" }
 num-traits = "0.2"
 thiserror = "1"
